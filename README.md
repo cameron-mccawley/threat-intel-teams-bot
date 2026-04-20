@@ -38,6 +38,7 @@ python3 script_starter.py
 - `SQLITE_DB_PATH` (optional, default: `prev_articles.db`)
 - `POLL_INTERVAL_SECONDS` (optional, default: `180`)
 - `MAX_WORKERS` (optional, default: `5`)
+- HTTP timeout is fixed at 15 seconds per request in code.
 - `RESTART_TIMER_SECONDS` (optional, default: `5`)
 - `BOT_SCRIPT_PATH` (optional, default: `./ThreatIntelBot.py`)
 - `CLEANUP_SCRIPT_PATH` (optional, default: `./cleanup_db.py`)
