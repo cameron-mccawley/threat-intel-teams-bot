@@ -14,7 +14,9 @@ RESTART_TIMER_SECONDS = int(os.getenv("RESTART_TIMER_SECONDS", "5"))
 def start_script() -> None:
     while True:
         try:
-            run(["python3", CLEANUP_SCRIPT_PATH], check=False)
+            cleanup_result = run(["python3", CLEANUP_SCRIPT_PATH], check=False)
+            if cleanup_result.returncode != 0:
+                print(f"Cleanup script exited with code {cleanup_result.returncode}. Continuing...")
             run(["python3", BOT_SCRIPT_PATH], check=True)
             return
         except Exception as exc:

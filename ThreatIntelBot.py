@@ -255,10 +255,17 @@ def process_feed(feed_url: str, source: str) -> None:
 def process_json_feed(json_articles) -> None:
     for article in json_articles:
         post_title = (article.get("post_title", "") or "").lower()
-        if not any(keyword in post_title for keyword in [".edu", "college", "university"]):
+        if not any(keyword in post_title for keyword in EDU_KEYWORDS):
             continue
 
-        article_identifier = (f"{article.get('post_title', '')}|{article.get('discovered', '')}").strip()
+        article_identifier = json.dumps(
+            {
+                "post_title": article.get("post_title", ""),
+                "discovered": article.get("discovered", ""),
+            },
+            sort_keys=True,
+            separators=(",", ":"),
+        )
         if not article_identifier:
             continue
         if not reserve_article(article_identifier):
@@ -269,22 +276,28 @@ def process_json_feed(json_articles) -> None:
             unreserve_article(article_identifier)
 
 
+def process_json_feed_url(json_url: str) -> None:
+    process_json_feed(get_articles_from_json(json_url))
+
+
 def main() -> None:
     initialize_db()
 
     with ThreadPoolExecutor(max_workers=MAX_WORKERS) as executor:
-        while True:
-            futures = [executor.submit(process_feed, feed, source) for feed, source in private_rss_feed_list]
-            json_articles = get_articles_from_json(json_feed_url)
-            futures.append(executor.submit(process_json_feed, json_articles))
+        try:
+            while True:
+                futures = [executor.submit(process_feed, feed, source) for feed, source in private_rss_feed_list]
+                futures.append(executor.submit(process_json_feed_url, json_feed_url))
 
-            for future in futures:
-                try:
-                    future.result()
-                except Exception as exc:
-                    print(f"Worker error: {exc}")
+                for future in futures:
+                    try:
+                        future.result()
+                    except Exception as exc:
+                        print(f"Worker error: {exc}")
 
-            time.sleep(POLL_INTERVAL_SECONDS)
+                time.sleep(POLL_INTERVAL_SECONDS)
+        except KeyboardInterrupt:
+            print("Shutting down bot.")
 
 
 if __name__ == "__main__":
