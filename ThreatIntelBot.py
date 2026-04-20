@@ -28,15 +28,15 @@ private_rss_feed_list = [
     ["https://threatpost.com/feed/", "Threatpost"],
     ["https://krebsonsecurity.com/feed/", "Krebs on Security"],
     ["https://www.darkreading.com/rss.xml", "Dark Reading"],
-    ["http://feeds.feedburner.com/eset/blog", "We Live Security"],
+    ["https://feeds.feedburner.com/eset/blog", "We Live Security"],
     ["https://davinciforensics.co.za/cybersecurity/feed/", "DaVinci Forensics"],
     ["https://blogs.cisco.com/security/feed", "Cisco"],
     ["https://www.infosecurity-magazine.com/rss/news/", "Information Security Magazine"],
-    ["http://feeds.feedburner.com/GoogleOnlineSecurityBlog", "Google"],
-    ["http://feeds.trendmicro.com/TrendMicroResearch", "Trend Micro"],
+    ["https://feeds.feedburner.com/GoogleOnlineSecurityBlog", "Google"],
+    ["https://feeds.trendmicro.com/TrendMicroResearch", "Trend Micro"],
     ["https://www.bleepingcomputer.com/feed/", "Bleeping Computer"],
     ["https://www.proofpoint.com/us/rss.xml", "Proof Point"],
-    ["http://feeds.feedburner.com/TheHackersNews?format=xml", "Hacker News"],
+    ["https://feeds.feedburner.com/TheHackersNews?format=xml", "Hacker News"],
     ["https://www.schneier.com/feed/atom/", "Schneier on Security"],
     ["https://www.binarydefense.com/feed/", "Binary Defense"],
     ["https://securelist.com/feed/", "Securelist"],
@@ -266,8 +266,6 @@ def process_json_feed(json_articles) -> None:
             sort_keys=True,
             separators=(",", ":"),
         )
-        if not article_identifier:
-            continue
         if not reserve_article(article_identifier):
             continue
 
