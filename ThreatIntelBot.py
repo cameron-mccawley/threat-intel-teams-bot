@@ -3,7 +3,7 @@ import os
 import sqlite3
 import time
 from hashlib import sha256
-from concurrent.futures import ThreadPoolExecutor
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from threading import Lock
 
 import feedparser
@@ -263,6 +263,7 @@ def process_json_feed(json_articles) -> None:
             {
                 "post_title": article.get("post_title", ""),
                 "discovered": article.get("discovered", ""),
+                "group_name": article.get("group_name", ""),
             },
             sort_keys=True,
             separators=(",", ":"),
@@ -289,7 +290,7 @@ def main() -> None:
                 futures = [executor.submit(process_feed, feed, source) for feed, source in private_rss_feed_list]
                 futures.append(executor.submit(process_json_feed_url, json_feed_url))
 
-                for future in futures:
+                for future in as_completed(futures):
                     try:
                         future.result()
                     except Exception as exc:
