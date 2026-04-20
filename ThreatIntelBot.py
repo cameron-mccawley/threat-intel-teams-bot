@@ -2,6 +2,7 @@ import json
 import os
 import sqlite3
 import time
+from hashlib import sha256
 from concurrent.futures import ThreadPoolExecutor
 from threading import Lock
 
@@ -258,7 +259,7 @@ def process_json_feed(json_articles) -> None:
         if not any(keyword in post_title for keyword in EDU_KEYWORDS):
             continue
 
-        article_identifier = json.dumps(
+        identifier_payload = json.dumps(
             {
                 "post_title": article.get("post_title", ""),
                 "discovered": article.get("discovered", ""),
@@ -266,6 +267,7 @@ def process_json_feed(json_articles) -> None:
             sort_keys=True,
             separators=(",", ":"),
         )
+        article_identifier = sha256(identifier_payload.encode("utf-8")).hexdigest()
         if not reserve_article(article_identifier):
             continue
 

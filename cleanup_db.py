@@ -21,7 +21,11 @@ def delete_older_than_30_days() -> None:
             print(f"Table {TABLE_NAME} does not exist yet; skipping cleanup.")
             return
 
-        cursor.execute("DELETE FROM PREV_ARTICLES WHERE added_at < datetime('now', '-30 days')")
+        if TABLE_NAME != "PREV_ARTICLES":
+            raise ValueError("Unexpected table name configured for cleanup.")
+        cursor.execute(
+            f"DELETE FROM {TABLE_NAME} WHERE added_at < datetime('now', '-30 days')"
+        )
         deleted_count = cursor.rowcount
         conn.commit()
         print(f"Deleted {deleted_count} rows older than 30 days.")
